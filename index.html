@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        
+        arr = [1, 2, 3, 4, 5, 6 ,7];
+
+        class Node {
+            constructor(data) {
+                this.data = data;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        
+
+        class Tree {
+            constructor() {
+                this.root = this.buildTree(arr);
+            }
+
+            buildTree(arr) {
+                
+                let sortedArray = mergeSort(arr);
+                let noDuplicatesArray = removeDuplicates(sortedArray);
+                
+                let root = this.arrayToBST(noDuplicatesArray, 0, noDuplicatesArray.length - 1)
+
+                return root;
+            }
+             
+            arrayToBST(arr, start, end) {
+                
+                if (start > end) {
+                    return null;
+                }
+
+                let mid = Math.floor((start + end) / 2);
+                let root = new Node(arr[mid]);
+
+            
+
+                root.left = this.arrayToBST(arr, start, mid - 1);
+                root.right = this.arrayToBST(arr, mid + 1, end);
+                
+                return root;
+            }
+
+            find(value) {
+                
+                
+                if (!this.root) {
+                    return false;
+                }
+
+                let current = this.root;
+
+                while (true) {
+
+                    if (value < current.data) {
+                        current = current.left;
+                    }
+                    else if (value > current.data) {
+                        current = current.right;
+                    }
+
+                    else {
+                        return current;
+                    }
+
+                }
+            }
+
+            levelOrder(root) {
+
+                let queue = [];
+
+                 if (this.root == null) {
+                    return null;
+                }
+
+                    
+                queue.push(this.root);
+
+                while (queue.length > 0) {
+                        
+                    let current = queue.shift();
+                    console.log(current.data);
+
+                    if (current.left != null) {
+                        queue.push(current.left);
+                    }
+
+                    if (current.right != null) {
+                        queue.push(current.right);
+                    }
+
+                }
+                    
+            };
+                
+            preorder(root) {
+
+                
+                if (root == null) {
+                    return;
+                }
+
+               console.log(root.data);
+
+               this.preorder(root.left);
+               this.preorder(root.right);
+
+
+                
+            };
+
+            inorder(root) {
+
+
+                if (root == null) {
+                    return;
+                }
+
+               
+
+               this.inorder(root.left);
+               console.log(root.data);
+               this.inorder(root.right);
+
+                
+
+            }   
+            
+            postorder(root) {
+                
+                if (root == null) {
+                    return;
+                }
+
+                this.postorder(root.left);
+                this.postorder(root.right);
+                console.log(root.data);
+            }
+
+            insert(value) {
+                let newNode = new Node(value);
+                
+                if (!this.root) {
+                    this.root = newNode;
+                    return this;
+                }
+                
+                let current = this.root;
+                console.log(current.data)
+
+                while (true) {
+                    
+                    if (value > current.data) {
+                        if (!current.right) {
+                            current.right = newNode;
+                            return this;
+                        }
+                        current = current.right;
+                    }
+
+                    else {
+                        if (!current.left) {
+                            current.left = newNode;
+                            return this;
+                        }
+                        current = current.left;
+                    }
+                    
+                }
+
+                return this;
+            }
+
+            delete (value) {
+                this.root = this.deleteNode(this.root, value)
+            }
+            
+            deleteNode(root, value) {
+
+                if (root == null) {
+                    return root;
+                }
+
+                if (value < root.data) {
+                    root.left = this.deleteNode(root.left, value) 
+                }
+                else if (value > root.data) {
+                    root.right = this.deleteNode(root.right, value)
+                }
+
+                else {
+
+                    if (root.left == null) {
+                        return root.right;
+                    }
+                    else if (root.right == null) {
+                        return root.left;
+                    }
+
+                    
+                    
+                    root.data = this.minValue(root.right)
+
+                    root.right = this.deleteNode(root.right, root.data)
+                }
+                
+                return root; 
+            }
+
+            minValue(root) {
+
+                let minv = root.data;
+
+                while (root.left != null) {
+                    minv = root.left.data;
+                    root = root.left;
+                }
+                return minv;
+                
+            }
+
+            depth(value) {
+
+                
+                let current = this.root;
+                let depth = 0;
+
+                if (current == value) {
+                    return 0;
+                }
+                console.log(current.data);
+                console.log(value);
+                
+                while (current != value && current != null) {
+                    
+                    if (value < current.data) {
+                        
+                        current = current.left;
+                        depth++;
+                    }
+                    else if (value > current.data) {
+                        current = current.right;
+                        depth++;
+                    }
+                    else {
+                        return;
+                    }
+                    
+                }
+                console.log(depth);
+                
+            }
+            
+
+        }
+
+
+        function mergeSort(arr) {
+            if (arr.length == 0) {
+                return "Empty array";
+            }
+            if (arr.length === 1) {
+                return arr;
+            }
+
+
+            let mid = Math.floor(arr.length / 2);
+            let leftHalf = arr.slice(0, mid);
+            let rightHalf = arr.slice(mid, arr.length);
+
+
+            leftHalf = mergeSort(leftHalf);
+            rightHalf = mergeSort(rightHalf);
+
+            return merge(leftHalf, rightHalf);
+            
+        }
+
+        function merge(leftHalf, rightHalf) {
+            
+            let sortedArray = [];
+            
+            while (leftHalf.length > 0 && rightHalf.length > 0) {
+                if (leftHalf[0] < rightHalf[0]) {
+                    sortedArray.push(leftHalf[0]); 
+                    leftHalf.shift();
+                }
+
+                else {
+                    sortedArray.push(rightHalf[0]);
+                    rightHalf.shift();
+                }
+                
+            }
+
+            while (leftHalf.length > 0) {
+                sortedArray.push(leftHalf[0]);
+                leftHalf.shift();
+            }
+
+            while (rightHalf.length > 0) {
+                sortedArray.push(rightHalf[0]);
+                rightHalf.shift();
+            }
+            return sortedArray;
+        }
+
+        function removeDuplicates(arr) {
+
+            
+            for (let i = 0; i < arr.length; i++) {
+
+                if (arr[i] == arr[i + 1]) {
+                    arr.splice(i + 1, 1);
+                }
+            }
+            return arr;
+        }
+
+
+
+        const prettyPrint = (node, prefix = '', isLeft = true) => {
+            if (node.right !== null) {
+                prettyPrint(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
+            }
+
+            console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}`);
+            
+            if (node.left !== null) {
+                prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+            }
+        }
+
+        
+        let newTree = new Tree(arr);
+        prettyPrint(newTree.root);
+
+        newTree.depth(7);
+
+        
+
+
+    </script>
+</body>
+</html>
